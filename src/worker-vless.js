@@ -1,7 +1,7 @@
 const DEFAULT_USER_ID = '28fe8443-1331-4108-a1a7-55ac225f8d8a';
 const DEFAULT_PROXY_IP = 'cdn.cloudflare.net';
 
-import { connect } from 'cloudflare:sockets';[cite: 1]
+import { connect } from 'cloudflare:sockets';
 
 if (!isValidUUID(DEFAULT_USER_ID)) {
 	throw new Error('uuid is not valid');
