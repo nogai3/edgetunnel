@@ -2,7 +2,7 @@
 // @ts-ignore
 import { connect } from 'cloudflare:sockets';
 
-const DEFAULT_USER_ID = 'ce16db6c-5a8a-4ccc-912b-8a5432787c18';
+const DEFAULT_USER_ID = '28fe8443-1331-4108-a1a7-55ac225f8d8a';
 const DEFAULT_PROXY_IP = 'cdn.cloudflare.net';
 const WS_READY_STATE_OPEN = 1;
 const WS_READY_STATE_CLOSING = 2;
@@ -11,26 +11,12 @@ for (let i = 0; i < 256; ++i) {
 	byteToHex.push((i + 256).toString(16).slice(1));
 }
 
-function isValidUUID(uuid) {
-	// const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-	// return uuidRegex.test(uuid);
-	return true;
-}
-
-if (!isValidUUID(DEFAULT_USER_ID)) {
-	throw new Error('uuid is not valid');
-}
-
 function unsafeStringify(arr, offset = 0) {
 	return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
 }
 
 function stringify(arr, offset = 0) {
-	const uuid = unsafeStringify(arr, offset);
-	if (!isValidUUID(uuid)) {
-		throw TypeError("Stringified UUID is invalid");
-	}
-	return uuid;
+	return unsafeStringify(arr, offset);
 }
 
 function base64ToArrayBuffer(base64Str) {
@@ -372,12 +358,6 @@ async function vlessOverWSHandler(request, userID, proxyIP) {
 }
 
 export default {
-	/**
-	 * @param {import("@cloudflare/workers-types").Request} request
-	 * @param {{UUID: string, PROXYIP: string}} env
-	 * @param {import("@cloudflare/workers-types").ExecutionContext} ctx
-	 * @returns {Promise<Response>}
-	 */
 	async fetch(request, env, ctx) {
 		try {
 			const activeUserID = (env && env.UUID) ? env.UUID : DEFAULT_USER_ID;
