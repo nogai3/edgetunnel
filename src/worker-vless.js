@@ -1,13 +1,9 @@
-// <!--GAMFC-->version base on commit 58686d5d125194d34a1137913b3a64ddcf55872f, time is 2024-11-27 09:26:01 UTC<!--GAMFC-END-->.
-// @ts-ignore
-import { connect } from 'cloudflare:sockets';
+const DEFAULT_USER_ID = '28fe8443-1331-4108-a1a7-55ac225f8d8a';
+const DEFAULT_PROXY_IP = 'cdn.cloudflare.net';
 
-// How to generate your own UUID:
-// [Windows] Press "Win + R", input cmd and run:  Powershell -NoExit -Command "[guid]::NewGuid()"
-let userID = '28fe8443-1331-4108-a1a7-55ac225f8d8a';
-let proxyIP = 'cdn.cloudflare.net';
+import { connect } from 'cloudflare:sockets';[cite: 1]
 
-if (!isValidUUID(userID)) {
+if (!isValidUUID(DEFAULT_USER_ID)) {
 	throw new Error('uuid is not valid');
 }
 
@@ -20,16 +16,17 @@ export default {
 	 */
 	async fetch(request, env, ctx) {
 		try {
-			userID = env.UUID || userID;
-			proxyIP = env.PROXYIP || proxyIP;
+			const activeUserID = (env && env.UUID) ? env.UUID : DEFAULT_USER_ID;
+			const activeProxyIP = (env && env.PROXYIP) ? env.PROXYIP : DEFAULT_PROXY_IP;
+
 			const upgradeHeader = request.headers.get('Upgrade');
 			if (!upgradeHeader || upgradeHeader !== 'websocket') {
 				const url = new URL(request.url);
 				switch (url.pathname) {
 					case '/':
 						return new Response(JSON.stringify(request.cf), { status: 200 });
-					case `/${userID}`: {
-						const vlessConfig = getVLESSConfig(userID, request.headers.get('Host'));
+					case `/${activeUserID}`: {
+						const vlessConfig = getVLESSConfig(activeUserID, request.headers.get('Host'));
 						return new Response(`${vlessConfig}`, {
 							status: 200,
 							headers: {
@@ -41,23 +38,19 @@ export default {
 						return new Response('Not found', { status: 404 });
 				}
 			} else {
-				return await vlessOverWSHandler(request);
+				return await vlessOverWSHandler(request, activeUserID, activeProxyIP);
 			}
 		} catch (err) {
-			/** @type {Error} */ let e = err;
-			return new Response(e.toString());
+			return new Response(err.toString(), { status: 500 });
 		}
 	},
 };
-
-
-
 
 /**
  * 
  * @param {import("@cloudflare/workers-types").Request} request
  */
-async function vlessOverWSHandler(request) {
+async function vlessOverWSHandler(request, userID, proxyIP) {
 
 	/** @type {import("@cloudflare/workers-types").WebSocket[]} */
 	// @ts-ignore
