@@ -4,5 +4,5 @@ compatibility_date = "2026-06-15"
 compatibility_flags = [ "nodejs_compat" ]
 
 [vars]
-UUID = "28fe8443-1331-4108-a1a7-55ac225f8d8a"
+UUID = "ce16db6c-5a8a-4ccc-912b-8a5432787c18"
 PROXYIP = "cdn.cloudflare.net"
