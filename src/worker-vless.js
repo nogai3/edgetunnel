@@ -2,7 +2,7 @@
 // @ts-ignore
 import { connect } from 'cloudflare:sockets';
 
-const DEFAULT_USER_ID = '28fe8443-1331-4108-a1a7-55ac225f8d8a';
+const DEFAULT_USER_ID = 'ce16db6c-5a8a-4ccc-912b-8a5432787c18';
 const DEFAULT_PROXY_IP = 'cdn.cloudflare.net';
 const WS_READY_STATE_OPEN = 1;
 const WS_READY_STATE_CLOSING = 2;
