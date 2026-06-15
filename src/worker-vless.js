@@ -171,7 +171,6 @@ function processVlessHeader(vlessBuffer, userID) {
 
 	const optLength = new Uint8Array(vlessBuffer.slice(17, 18))[0];
 	const command = new Uint8Array(vlessBuffer.slice(18 + optLength, 18 + optLength + 1))[0];
-
 	if (command === 2) {
 		isUDP = true;
 	} else if (command !== 1) {
@@ -302,7 +301,6 @@ async function vlessOverWSHandler(request, userID, proxyIP) {
 	const [client, webSocket] = Object.values(webSocketPair);
 
 	webSocket.accept();
-
 	let address = '';
 	let portWithRandomLog = '';
 	const log = (info, event) => {
@@ -351,7 +349,6 @@ async function vlessOverWSHandler(request, userID, proxyIP) {
 			}
 			const vlessResponseHeader = new Uint8Array([vlessVersion[0], 0]);
 			const rawClientData = chunk.slice(rawDataIndex);
-
 			if (isDns) {
 				const { write } = await handleUDPOutBound(webSocket, vlessResponseHeader, log);
 				udpStreamWrite = write;
